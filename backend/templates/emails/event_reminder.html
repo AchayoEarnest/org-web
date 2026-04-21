@@ -1,0 +1,10 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h2>Reminder: {{ event.title }} is tomorrow</h2>
+<p>Hi {{ reg.user.full_name }},</p>
+<p>Just a reminder that <strong>{{ event.title }}</strong> is happening tomorrow.</p>
+<ul>
+<li><strong>Date:</strong> {{ event.start_datetime|date:"F j, Y, g:i a" }}</li>
+<li><strong>Location:</strong> {% if event.is_virtual %}{{ event.virtual_url }}{% else %}{{ event.location }}{% endif %}</li>
+</ul>
+{% endblock %}

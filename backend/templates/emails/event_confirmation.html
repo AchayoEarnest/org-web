@@ -1,0 +1,11 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h2>Registration confirmed!</h2>
+<p>Hi {{ reg.user.full_name }},</p>
+<p>You are registered for <strong>{{ event.title }}</strong>.</p>
+<ul>
+<li><strong>Date:</strong> {{ event.start_datetime|date:"F j, Y, g:i a" }}</li>
+<li><strong>Location:</strong> {{ event.location }}</li>
+{% if event.is_virtual %}<li><strong>Join link:</strong> <a href="{{ event.virtual_url }}">{{ event.virtual_url }}</a></li>{% endif %}
+</ul>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h2>Verify your email address</h2>
+<p>Hi {{ user.full_name }},</p>
+<p>Please verify your email address to activate your account.</p>
+<a href="{{ url }}" class="btn">Verify Email</a>
+<p>This link expires in 24 hours. If you did not create an account, ignore this email.</p>
+{% endblock %}
