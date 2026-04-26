@@ -21,23 +21,29 @@ class RateLimitMiddleware:
             limit, window = RATE_LIMITS.get(request.path, RATE_LIMITS["default"])
             ip = self._get_ip(request)
             key = f"rl:{ip}:{request.path}"
-            count = cache.get(key, 0)
-            if count >= limit:
+            try:
+                # Redis-backed cache: use atomic pipeline
+                pipeline = cache.client.get_client().pipeline()
+                pipeline.incr(key)
+                pipeline.expire(key, window)
+                results = pipeline.execute()
+                count = results[0]
+            except AttributeError:
+                # Fallback for non-Redis cache (e.g. LocMemCache in dev)
+                count = cache.get(key, 0) + 1
+                cache.set(key, count, window)
+
+            if count > limit:
                 return JsonResponse(
                     {"detail": "Rate limit exceeded. Try again later."},
                     status=429,
                     headers={"Retry-After": str(window)},
                 )
-            pipeline = cache.client.get_client().pipeline()
-            pipeline.incr(key)
-            pipeline.expire(key, window)
-            pipeline.execute()
         return self.get_response(request)
 
     def _get_ip(self, request):
         forwarded = request.META.get("HTTP_X_FORWARDED_FOR")
         return forwarded.split(",")[0].strip() if forwarded else request.META.get("REMOTE_ADDR", "0.0.0.0")
-
 
 class ActivityLoggingMiddleware:
     WRITE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}

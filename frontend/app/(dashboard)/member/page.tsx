@@ -1,10 +1,10 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-export const metadata = { title: "My Dashboard" }
+export const metadata = { title: "My Dashboard" };
 
 export default async function MemberPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-6">My Dashboard</h1>
@@ -12,5 +12,5 @@ export default async function MemberPage() {
         <p className="text-gray-500">Welcome, {session?.user?.name}!</p>
       </div>
     </div>
-  )
+  );
 }
